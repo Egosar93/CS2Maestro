@@ -81,6 +81,16 @@ def stop_servers():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
+# Route zum Stoppen eines einzelnen Servers
+@app.route('/stop_server/<port>', methods=['POST'])
+@login_required
+def stop_server(port):
+    try:
+        result = subprocess.run([f'lsof -t -i:{port} | xargs kill -9'], shell=True, capture_output=True, text=True)
+        return jsonify({"status": "success", "message": f"Server auf Port {port} wurde gestoppt."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
 # Route zum Überprüfen der aktiven Server
 @app.route('/list_servers', methods=['GET'])
 @login_required
@@ -93,7 +103,7 @@ def list_servers():
             sock.settimeout(1)
             result = sock.connect_ex(('127.0.0.1', port))
             if result == 0:
-                active_servers.append(f'Server auf Port {port} ist aktiv')
+                active_servers.append(f'{port}')
 
     return jsonify({"servers": active_servers})
 

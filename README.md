@@ -1,4 +1,4 @@
-# CS2 Server Control
+# CS2 Web Manager
 
 Dieses Projekt ermöglicht die Steuerung von CS2-Servern über eine Weboberfläche. Es verwendet Flask, Flask-Login und Shell-Skripte, um Server zu starten, zu stoppen und zu verwalten.
 
