@@ -1,15 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import subprocess
+import socket
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  
+app.secret_key = 'your_secret_key'
 
-# Flask-Login 
+# Flask-Login einrichten
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Einfacher Account
+# Einfache Benutzerverwaltung (für echte Anwendungen eine Datenbank verwenden)
 users = {'admin': {'password': 'password123'}}
 
 class User(UserMixin):
@@ -44,14 +46,14 @@ def login():
     return render_template('login.html')
 
 # Logout
-@app.route('/logout', methods=['GET', 'POST'])  # Erlaube sowohl GET als auch POST
+@app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     flash('Erfolgreich abgemeldet', 'success')
     return redirect(url_for('login'))
 
-# Route zum Starten des Servers (erfordert Login)
+# Route zum Starten des Servers
 @app.route('/start_server', methods=['POST'])
 @login_required
 def start_server():
@@ -69,7 +71,7 @@ def start_server():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
-# Route zum Stoppen des Servers (erfordert Login)
+# Route zum Stoppen des Servers
 @app.route('/stop_servers', methods=['POST'])
 @login_required
 def stop_servers():
@@ -78,8 +80,22 @@ def stop_servers():
         return jsonify({"status": "success", "message": result.stdout})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
-    
 
+# Route zum Überprüfen der aktiven Server
+@app.route('/list_servers', methods=['GET'])
+@login_required
+def list_servers():
+    active_servers = []
+    ports = range(27015, 27021)  # Beispielhafter Portbereich
+
+    for port in ports:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(1)
+            result = sock.connect_ex(('127.0.0.1', port))
+            if result == 0:
+                active_servers.append(f'Server auf Port {port} ist aktiv')
+
+    return jsonify({"servers": active_servers})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
