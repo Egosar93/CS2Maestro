@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS2 Server Steuerung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input, select, button {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CS2 Server Steuerung</h1>
+
+        <form id="start-server-form">
+            <label for="base_name">Servername:</label>
+            <input type="text" id="base_name" name="base_name" required>
+
+            <label for="server_count">Anzahl der Server:</label>
+            <input type="number" id="server_count" name="server_count" min="1" required>
+
+            <label for="map_name">Map Name:</label>
+            <select id="map_name" name="map_name">
+                <option value="de_dust2">de_dust2</option>
+                <option value="de_inferno">de_inferno</option>
+                <option value="de_mirage">de_mirage</option>
+                <option value="de_nuke">de_nuke</option>
+                <option value="de_overpass">de_overpass</option>
+                <option value="de_vertigo">de_vertigo</option>
+                <option value="de_train">de_train</option>
+                <option value="de_ancient">de_ancient</option>
+                <option value="de_cache">de_cache</option>
+            </select>
+
+            <label for="game_mode">Spielmodus:</label>
+            <select id="game_mode" name="game_mode">
+                <option value="competitive">Wettkampf</option>
+                <option value="deathmatch">Deathmatch</option>
+                <option value="casual">Gelegenheitsspiel</option>
+                <option value="wingman">Wingman</option>
+            </select>
+
+            <button type="submit">Server starten</button>
+        </form>
+
+        <h2>Alle Server stoppen</h2>
+        <button id="stop-servers-btn">Server stoppen</button>
+
+        <form action="/logout" method="POST">
+            <button type="submit">Abmelden</button>
+        </form>
+
+        <div id="output" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('start-server-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('/start_server', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerText = data.message;
+            })
+            .catch(error => {
+                console.error('Fehler:', error);
+            });
+        });
+
+        document.getElementById('stop-servers-btn').addEventListener('click', function () {
+            fetch('/stop_servers', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').innerText = data.message;
+            })
+            .catch(error => {
+                console.error('Fehler:', error);
+            });
+        });
+    </script>
+</body>
+</html>
