@@ -40,13 +40,13 @@
         <h1>CS2 Server Steuerung</h1>
 
         <form id="start-server-form">
-            <label for="base_name">Servername:</label>
+            <label for="base_name">Basis-Servername:</label>
             <input type="text" id="base_name" name="base_name" required>
 
             <label for="server_count">Anzahl der Server:</label>
             <input type="number" id="server_count" name="server_count" min="1" required>
 
-            <label for="map_name">Map Name:</label>
+            <label for="map_name">Kartenname:</label>
             <select id="map_name" name="map_name">
                 <option value="de_dust2">de_dust2</option>
                 <option value="de_inferno">de_inferno</option>
@@ -73,11 +73,15 @@
         <h2>Alle Server stoppen</h2>
         <button id="stop-servers-btn">Server stoppen</button>
 
+        <h2>Aktive Server auflisten</h2>
+        <button id="list-servers-btn">Aktive Server anzeigen</button>
+
         <form action="/logout" method="POST">
             <button type="submit">Abmelden</button>
         </form>
 
         <div id="output" style="margin-top: 20px;"></div>
+        <div id="active-servers" style="margin-top: 20px;"></div>
     </div>
 
     <script>
@@ -109,6 +113,25 @@
             })
             .catch(error => {
                 console.error('Fehler:', error);
+            });
+        });
+
+        document.getElementById('list-servers-btn').addEventListener('click', function () {
+            fetch('/list_servers', {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const serverList = document.getElementById('active-servers');
+                serverList.innerHTML = '<h3>Aktive Server:</h3>';
+                if (data.servers.length > 0) {
+                    serverList.innerHTML += '<ul>' + data.servers.map(server => `<li>${server}</li>`).join('') + '</ul>';
+                } else {
+                    serverList.innerHTML += '<p>Keine Server aktiv</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Fehler beim Abrufen der aktiven Server:', error);
             });
         });
     </script>
