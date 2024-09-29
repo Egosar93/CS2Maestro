@@ -96,7 +96,7 @@ def stop_server(port):
 @login_required
 def list_servers():
     active_servers = []
-    ports = range(27015, 27021)  # Beispielhafter Portbereich
+    ports = range(27015, 27020)  # Beispielhafter Portbereich
 
     for port in ports:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
