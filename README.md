@@ -6,11 +6,11 @@ Dieses Projekt ermöglicht die Steuerung von CS2-Servern über eine Weboberfläc
 
 1. Klone das Repository:
    ```bash
-   git clone https://github.com/dein-benutzername/cs2-server-control.git
+   git clone https://github.com/Egosar93/web_cs2server_manager.git
    ```
 2. Navigiere in das Projektverzeichnis:
    ```bash
-   cd cs2-server-control
+   cd web_cs2server_manager
    ```
 3. Installiere die Abhängigkeiten:
    ```bash
