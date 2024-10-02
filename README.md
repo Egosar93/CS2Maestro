@@ -40,3 +40,5 @@ Dieses Projekt ermöglicht die Steuerung von CS2-Servern über eine Weboberfläc
 
 - Flask
 - Flask-Login
+- Flask-SocketIO
+- rcon
