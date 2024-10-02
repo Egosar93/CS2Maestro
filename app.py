@@ -126,7 +126,7 @@ def handle_rcon_command(data):
 
     try:
         # Aktualisierte Verwendung von rcon.source.Client
-        with Client(ip, port, passwd='test123') as client:
+        with Client(ip, port, passwd='dein_rcon_passwort') as client:
             response = client.run(command)
             emit('rcon_output', {'output': response})
     except Exception as e:
