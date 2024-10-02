@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_socketio import SocketIO, emit
 import subprocess
 import socket
+from rcon.source import Client  # Aktualisierter Import für den RCON-Client
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+socketio = SocketIO(app, async_mode=None)
 
 # Flask-Login einrichten
 login_manager = LoginManager()
@@ -107,5 +110,27 @@ def list_servers():
 
     return jsonify({"servers": active_servers})
 
+# Route für das RCON-Terminal (HTML-Seite)
+@app.route('/rcon_terminal')
+@login_required
+def rcon_terminal():
+    return render_template('rcon_terminal.html')
+
+# WebSocket-Event für RCON-Befehle
+@socketio.on('send_rcon_command')
+@login_required
+def handle_rcon_command(data):
+    ip = data.get('ip')
+    port = data.get('port')
+    command = data.get('command')
+
+    try:
+        # Aktualisierte Verwendung von rcon.source.Client
+        with Client(ip, port, passwd='test123') as client:
+            response = client.run(command)
+            emit('rcon_output', {'output': response})
+    except Exception as e:
+        emit('rcon_output', {'output': f"Fehler: {str(e)}"})
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000)
