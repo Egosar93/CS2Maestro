@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCON Terminal</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: black;
+            color: lime;
+            margin: 0;
+            padding: 10px;
+        }
+        #terminal {
+            width: 100%;
+            height: 90vh;
+            overflow-y: auto;
+            background-color: black;
+            padding: 10px;
+            border: 1px solid #333;
+        }
+        #command-input {
+            width: 100%;
+            padding: 10px;
+            background-color: #222;
+            color: lime;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+
+<div id="terminal"></div>
+<input type="text" id="command-input" placeholder="Gib deinen RCON-Befehl ein und drücke Enter">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+<script>
+    const terminal = document.getElementById('terminal');
+    const commandInput = document.getElementById('command-input');
+    const socket = io();
+
+    // Verbinde mit dem WebSocket-Server
+    socket.on('connect', function() {
+        terminal.innerHTML += "Verbunden mit RCON-Server<br>";
+    });
+
+    // Zeige die RCON-Ausgabe im Terminal an
+    socket.on('rcon_output', function(data) {
+        terminal.innerHTML += data.output + '<br>';
+        terminal.scrollTop = terminal.scrollHeight;  // Automatisches Scrollen nach unten
+    });
+
+    // Sende RCON-Befehl, wenn Enter gedrückt wird
+    commandInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const command = commandInput.value;
+            socket.emit('send_rcon_command', {
+                ip: '192.168.178.166',  // Beispiel-IP des Servers
+                port: 27015,  // Beispiel-Port des Servers
+                command: command
+            });
+            commandInput.value = '';  // Eingabefeld leeren
+        }
+    });
+</script>
+
+</body>
+</html>
