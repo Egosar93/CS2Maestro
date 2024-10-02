@@ -30,7 +30,7 @@ Dieses Projekt ermöglicht die Steuerung von CS2-Servern über eine Weboberfläc
 - Starten und Stoppen von CS2-Servern
 - Auswahl von Spielmodus und Karte
 - Mehrere Server verwalten
-
+- Rcon
 ## Konfiguration
 
 - Benutzername: `admin`
